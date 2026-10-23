@@ -1,4 +1,4 @@
-/* HunterNet v14.7.0 */
+/* HunterNet v14.7.1 */
 
 /* ── STATO ── */
 var hn_tags     = ['#notizie'];
@@ -254,7 +254,7 @@ function hnYtLiteHtml(id) {
 function hnYtPlay(el, id) {
   if (el.getAttribute('data-on')) return;
   el.setAttribute('data-on', '1');
-  el.innerHTML = '<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
+  el.innerHTML = '<iframe src="https://www.youtube.com/embed/'+id+'?autoplay=1" style="position:absolute!important;top:0!important;left:0!important;width:100%!important;height:100%!important;border:none!important;" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
 }
 
 function hnPostMediaHtml(url) {
