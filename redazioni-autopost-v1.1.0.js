@@ -1,4 +1,10 @@
-/* Redazioni AutoPost v1.0.0
+/* Redazioni AutoPost v1.1.0
+
+   v1.1.0 - La card del link mostra un indirizzo finto della testata
+            (es. laspina.onion/#titolo_articolo) al posto di quello di ForumFree,
+            che resta la destinazione del clic. Richiede hunternet-autopost v1.1.0
+            e HunterNet v14.9.0.
+
    Quando qualcuno pubblica un nuovo articolo in una delle tre redazioni,
    pubblica un post su HunterNet a nome della testata.
 
@@ -9,7 +15,7 @@
      uguale, entro 15 minuti): pubblica il post con chiave art_<idTopic>,
      quindi lo stesso articolo non viene mai annunciato due volte.
 
-   Richiede hunternet-autopost-v1.0.0.js caricato prima (o dopo: lo script
+   Richiede hunternet-autopost-v1.1.0.js caricato prima (o dopo: lo script
    aspetta fino a 10 secondi che HunterNetAutoPost sia disponibile).
    Non tocca firme, HTML delle sezioni o lo script redazioni-firme.
 */
@@ -18,9 +24,9 @@
   var MAX_ETA = 15 * 60 * 1000;
 
   var TESTATE = {
-    '65121577': { profilo: 'LaSpina', nome: 'La Spina', tag: '#LaSpina', tono: 'sarcastico' },
-    '65121578': { profilo: 'YorkShinTimes', nome: 'York Shin Times', tag: '#YorkShinTimes', tono: 'professionale' },
-    '65121579': { profilo: 'SwardaniPost', nome: 'Swardani Post', tag: '#SwardaniPost', tono: 'professionale' }
+    '65121577': { profilo: 'LaSpina', nome: 'La Spina', tag: '#LaSpina', dominio: 'laspina.onion', tono: 'sarcastico' },
+    '65121578': { profilo: 'YorkShinTimes', nome: 'York Shin Times', tag: '#YorkShinTimes', dominio: 'yorkshintimes.yr', tono: 'professionale' },
+    '65121579': { profilo: 'SwardaniPost', nome: 'Swardani Post', tag: '#SwardaniPost', dominio: 'swardanipost.as', tono: 'professionale' }
   };
 
   /* Testi dei post. {t} = titolo, {f} = " di Nome" oppure vuoto.
@@ -74,6 +80,16 @@
     var m = String(testo).match(/\[img[^\]]*\]\s*(https?:\/\/[^\s\[]+)\s*\[\/img\]/i) ||
             String(testo).match(/<img[^>]+src\s*=\s*["']?(https?:\/\/[^"'\s>]+)/i);
     return m ? m[1] : '';
+  }
+
+  /* Titolo per l'indirizzo finto: minuscolo, senza accenti,
+     tutto cio' che non e' lettera o numero diventa "_" */
+  function slug(titolo) {
+    var t = String(titolo || '').toLowerCase();
+    if (t.normalize) t = t.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    t = t.replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+    if (t.length > 60) t = t.slice(0, 60).replace(/_[^_]*$/, '');
+    return t || 'articolo';
   }
 
   /* 1. Pagina "Nuova discussione" */
@@ -131,6 +147,7 @@
         linkUrl: link,
         linkTitle: testata.nome + ' - ' + p.titolo,
         linkImage: p.img,
+        linkDisplay: testata.dominio + '/#' + slug(p.titolo),
         key: 'art_' + topic
       }).catch(function(e) { console.warn('Redazioni AutoPost:', e && e.message); });
     }, 40);
