@@ -1,6 +1,9 @@
-/* HunterNet AutoPost v1.0.0
+/* HunterNet AutoPost v1.1.0
    Permette ad altri script del forum (HeavensBet, giornali...) di pubblicare un post su HunterNet
    a nome di un profilo HunterNet esistente.
+
+   v1.1.0 - Nuovo campo facoltativo linkDisplay: testo mostrato nella card del link al posto
+            dell'indirizzo vero, che resta la destinazione del clic (richiede HunterNet v14.9.0).
 
    Uso:
      HunterNetAutoPost('nickname_profilo', {
@@ -9,6 +12,7 @@
        linkUrl: 'https://...',           opzionale
        linkTitle: 'Titolo del link',     opzionale
        linkImage: 'https://...',         opzionale, immagine dell'anteprima del link
+       linkDisplay: 'sito.it/#pagina',   opzionale, indirizzo mostrato nella card del link
        key: 'hb_apertura_123'            opzionale: chiave unica, impedisce di pubblicare due volte lo stesso post
      }).then(function(post) { ... }).catch(function(err) { ... });
 */
@@ -93,6 +97,7 @@
           linkUrl: linkUrl,
           linkTitle: linkUrl ? String(data.linkTitle || '') : '',
           linkImage: linkUrl ? safeUrl(data.linkImage) : '',
+          linkDisplay: linkUrl ? String(data.linkDisplay || '').slice(0, 150) : '',
           mood: '',
           likes: [], dislikes: [], comments: [],
           poll: null,
