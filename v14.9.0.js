@@ -1,4 +1,8 @@
-/* HunterNet v14.8.0 */
+/* HunterNet v14.9.0 */
+/* v14.9.0 - Campo facoltativo linkDisplay nei post: se presente, la card del
+   link mostra quel testo (es. laspina.onion/#titolo) al posto dell'indirizzo
+   vero, che resta la destinazione del clic. Usato dai post automatici delle
+   redazioni; conservato anche nelle condivisioni. */
 
 /* ── STATO ── */
 var hn_tags     = ['#notizie'];
@@ -360,7 +364,7 @@ function hnSmallMediaHtml(url, maxH) {
   if (yt) return hnYtLiteHtml(yt);
   return '<img src="'+hnEsc(url)+'" style="max-width:100%!important;max-height:'+(maxH||200)+'px!important;border-radius:6px!important;margin-top:5px!important;display:block!important;cursor:pointer!important;object-fit:cover!important;" onclick="event.stopPropagation();hnOpenLightbox(this.src)" onerror="this.style.display=\'none\'">';
 }
-function hnLinkCardHtml(linkUrl, linkTitle, linkImage, small) {
+function hnLinkCardHtml(linkUrl, linkTitle, linkImage, small, linkDisplay) {
   var url = hnSafeUrl(linkUrl);
   if (!url) return '';
   var img = hnSafeUrl(linkImage);
@@ -369,7 +373,7 @@ function hnLinkCardHtml(linkUrl, linkTitle, linkImage, small) {
     '<div style="padding:'+(small?'8px 10px':'10px 12px')+'!important;">'+
     '<div style="font-size:10px!important;color:#5b6577!important;margin-bottom:3px!important;text-transform:uppercase!important;letter-spacing:0.5px!important;">&#128279; Link</div>'+
     (linkTitle ? '<div style="font-size:'+(small?12:13)+'px!important;font-weight:500!important;color:#e2e8f0!important;margin-bottom:2px!important;">'+hnEsc(linkTitle)+'</div>' : '')+
-    '<div style="font-size:11px!important;color:#5b9cf6!important;word-break:break-all!important;">'+hnEsc(url)+'</div>'+
+    '<div style="font-size:11px!important;color:#5b9cf6!important;word-break:break-all!important;">'+hnEsc(linkDisplay || url)+'</div>'+
     '</div></a>';
 }
 
@@ -1884,7 +1888,7 @@ function hnRenderPostParts(p) {
     '<div data-hnpart="mood"></div>';
 
   /* media e link */
-  parts.media = '<div data-hnpart="media">'+hnPostMediaHtml(p)+hnLinkCardHtml(p.linkUrl, p.linkTitle, p.linkImage, false)+'</div>';
+  parts.media = '<div data-hnpart="media">'+hnPostMediaHtml(p)+hnLinkCardHtml(p.linkUrl, p.linkTitle, p.linkImage, false, p.linkDisplay)+'</div>';
 
   /* post condiviso */
   parts.shared = '<div data-hnpart="shared">'+hnSharedHtml(p)+'</div>';
@@ -1923,7 +1927,7 @@ function hnSharedHtml(p) {
   if (live) { src = live; a = hnAuthorOf(live); }
   else {
     hnEnsurePost(sp.id);
-    src = {id:sp.id, text:sp.text, imgUrl:sp.imgUrl, images:sp.images, linkUrl:sp.linkUrl, linkTitle:sp.linkTitle, linkImage:sp.linkImage};
+    src = {id:sp.id, text:sp.text, imgUrl:sp.imgUrl, images:sp.images, linkUrl:sp.linkUrl, linkTitle:sp.linkTitle, linkImage:sp.linkImage, linkDisplay:sp.linkDisplay};
     a = hnAuthorOf({authorId:sp.authorId, authorName:sp.authorName, authorHandle:sp.authorHandle});
   }
   var nested = '';
@@ -1939,7 +1943,7 @@ function hnSharedHtml(p) {
     '<div class="hn-shared-author">'+(a.deleted ? 'Utente Cancellato' : hnEsc(a.name)+' <span style="color:#5b6577!important;">@'+hnEsc(a.handle)+'</span>')+'</div>'+
     (src.text ? '<div class="hn-shared-text">'+hnFormatText(src.text)+'</div>' : '')+
     hnSmallMediaHtml(media[0], 180)+extra+
-    hnLinkCardHtml(src.linkUrl, src.linkTitle, src.linkImage, true)+
+    hnLinkCardHtml(src.linkUrl, src.linkTitle, src.linkImage, true, src.linkDisplay)+
     (live && live.poll ? '<div class="hn-shared-meta">&#128202; Contiene un sondaggio</div>' : '')+
     nested+
     '</div>';
@@ -3240,7 +3244,7 @@ function hnOpenShare(pid) {
     (target.text ? '<div class="hn-shared-text">'+hnFormatText(target.text)+'</div>' : '')+
     (yt ? '<img src="https://i.ytimg.com/vi/'+yt+'/hqdefault.jpg" style="max-width:100%;max-height:120px;border-radius:6px;margin-top:6px;object-fit:cover;display:block;" alt="">' :
       (img ? '<img src="'+hnEsc(img)+'" style="max-width:100%;max-height:120px;border-radius:6px;margin-top:6px;object-fit:cover;display:block;" onerror="this.style.display=\'none\'">' : ''))+
-    (hnSafeUrl(target.linkUrl) ? '<div class="hn-shared-meta">&#128279; '+hnEsc(target.linkTitle || target.linkUrl)+'</div>' : '');
+    (hnSafeUrl(target.linkUrl) ? '<div class="hn-shared-meta">&#128279; '+hnEsc(target.linkTitle || target.linkDisplay || target.linkUrl)+'</div>' : '');
   document.getElementById('hn-share-err').style['display'] = 'none';
   hnOpenModal('share');
 }
@@ -3265,7 +3269,8 @@ function hnDoShare() {
       id: orig.id, authorId: orig.authorId,
       authorName: a.name, authorHandle: a.handle,
       text: orig.text || '', imgUrl: orig.imgUrl || '', images: hnArr(orig.images),
-      linkUrl: orig.linkUrl || '', linkTitle: orig.linkTitle || '', linkImage: orig.linkImage || ''
+      linkUrl: orig.linkUrl || '', linkTitle: orig.linkTitle || '', linkImage: orig.linkImage || '',
+      linkDisplay: orig.linkDisplay || ''
     },
     createdAt: new Date().toISOString()
   };
