@@ -29,9 +29,9 @@
   var MAX_ETA = 15 * 60 * 1000;
 
   var TESTATE = {
-    '65121577': { profilo: 'LaSpina', nome: 'La Spina', dominio: 'laspina.onion' },
-    '65121578': { profilo: 'YorkShinTimes', nome: 'York Shin Times', dominio: 'yorkshintimes.yr' },
-    '65121579': { profilo: 'SwardaniPost', nome: 'Swardani Post', dominio: 'swardanipost.as' }
+    '9165393': { profilo: 'LaSpina', nome: 'La Spina', dominio: 'laspina.onion' },
+    '9165394': { profilo: 'YorkShinTimes', nome: 'York Shin Times', dominio: 'yorkshintimes.yb' },
+    '9165395': { profilo: 'SwardaniPost', nome: 'Swardani Post', dominio: 'swardanipost.as' }
   };
 
   /* Testi dei post. {t} = titolo, {f} = ", di Nome" oppure vuoto.
