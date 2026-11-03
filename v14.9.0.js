@@ -2147,7 +2147,7 @@ function hnRenderHunters() {
     seen[prof.id]=true; recent.push(prof);
     if (recent.length>=5) break;
   }
-  if (!recent.length){el.innerHTML='<div style="font-size:12px;color:#a09a93;padding:4px 0;">Nessun cacciatore ancora.</div>';return;}
+  if (!recent.length){el.innerHTML='<div style="font-size:12px;color:#a09a93;padding:4px 0;">Nessun utente attivo.</div>';return;}
   var html='';
   for (var j=0;j<recent.length;j++) {
     var r=recent[j];
