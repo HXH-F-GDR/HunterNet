@@ -39,8 +39,8 @@
      per lo stesso articolo, ma diverso da un articolo all'altro. */
   var TESTI = {
     'LaSpina': [
-      'Qualcuno doveva pur dirlo, e ovviamente tocca a noi: «{t}»{f}. Leggetelo prima che diventi vero. #LaSpina',
-      'Fermi tutti, nuovo pezzo in pagina: «{t}»{f}. Potete fingere di averlo letto, o leggerlo davvero. #LaSpina',
+      'Qualcuno doveva pur dirlo, e ovviamente tocca a noi: «{t}»{f}. Leggetelo prima che lo buttino giù. #LaSpina',
+      'Fermi tutti, nuovo pezzo in pagina: «{t}»{f}. Siamo al limite del ridicolo, davvero. #LaSpina',
       'La notizia che nessuno ha chiesto ma di cui tutti avevano bisogno: «{t}»{f}. #LaSpina',
       'Mettete giù quel caffè: «{t}»{f}. Poi non dite che non vi avevamo avvisato. #LaSpina'
     ],
@@ -50,7 +50,7 @@
     ],
     'SwardaniPost': [
       'Pubblicato sullo Swardani Post: «{t}»{f}. Leggi l\'articolo completo. #SwardaniPost',
-      'Da oggi in edicola online: «{t}»{f}. Approfondimento completo sullo Swardani Post. #SwardaniPost'
+      'Da oggi online: «{t}»{f}. Approfondimento completo sullo Swardani Post. #SwardaniPost'
     ]
   };
 
