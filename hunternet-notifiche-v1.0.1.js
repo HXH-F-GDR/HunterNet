@@ -1,4 +1,9 @@
-/* HunterNet - notifiche nel forum v1.0.0
+/* HunterNet - notifiche nel forum (hunternet-notifiche) v1.0.1
+   v1.0.1 - Il contatore HunterNet sul pulsante Notifiche (desktop) va dopo
+   quello del forum e non contiene più un <em>: prima impediva al plugin di
+   ForumFree di togliere il proprio numero, che si duplicava. Le righe
+   HunterNet tornano da sole se il plugin le cancella ricaricando la lista.
+   Separatore "Forum" alla fine del blocco HunterNet.
    Mostra le notifiche HunterNet degli account collegati all'utente del forum
    in un blocco "HunterNet" in cima al pannello Notifiche di ForumFree
    (desktop e mobile), con un contatore accanto a quello del forum.
@@ -117,7 +122,9 @@
       '#hnfn-block .hnfn-type{overflow:hidden}' +
       '#hnfn-block .hnfn-type i{display:flex;align-items:center;justify-content:center;width:100%;height:100%;border-radius:50%;background:var(--uno);color:var(--otto);font-size:12px;line-height:1}' +
       '#hnfn-block .hnfn-acc{opacity:.75;font-size:.9em}' +
-      '.hnfn-count em{font-style:normal}' +
+      '#hnfn-block .hnfn-end{margin:8px 14px 4px 3px}' +
+      '.hnfn-count{display:inline;margin-left:4px;padding:3px 8px;border-radius:5px;border:2px solid var(--otto);background:var(--uno);color:var(--otto);font:700 13px montserrat,sans-serif}' +
+      '.hnfn-count .hnfn-hn{font-size:9px;margin-right:3px;letter-spacing:.5px;opacity:.85}' +
       '#hnfn-bar{cursor:pointer}';
     var st = document.createElement('style');
     st.id = 'hnfn-style';
@@ -222,10 +229,12 @@
     var html = '<div class="hnfn-head"><span>HunterNet</span>' +
       (unreadCount() ? '<span class="hnfn-mark">Segna tutte come lette</span>' : '') + '</div>';
     for (var j = 0; j < list.length; j++) html += rowHtml(list[j], many);
+    html += '<div class="hnfn-head hnfn-end"><span>Forum</span></div>';
     return html;
   }
 
   var lastHtml = null;
+  var lastCount = 0;
   function ensureBlock() {
     var box = document.getElementById('notifications-box');
     if (!box) return;
@@ -233,20 +242,30 @@
     var html = buildBlock();
     var block = document.getElementById('hnfn-block');
     if (!html) {
-      if (block) block.parentNode.removeChild(block);
       lastHtml = null;
+      lastCount = 0;
+      if (block) block.parentNode.removeChild(block);
       return;
     }
     if (!block) {
       block = document.createElement('div');
       block.id = 'hnfn-block';
       block.addEventListener('click', onBlockClick);
+      /* il plugin di ForumFree, ricaricando, cancella tutte le .notification-container
+         del pannello, comprese le nostre: in quel caso le rimettiamo */
+      new MutationObserver(function () {
+        if (lastCount && block.querySelectorAll('.hnfn-item').length !== lastCount) {
+          block['inner' + 'HTML'] = lastHtml;
+        }
+      }).observe(block, { childList: true });
       lastHtml = null;
     }
     if (box.firstChild !== block) box.insertBefore(block, box.firstChild);
-    if (html !== lastHtml || !block.querySelector('.hnfn-item')) {
-      block['inner' + 'HTML'] = html;
+    var count = (html.match(/hnfn-item/g) || []).length;
+    if (html !== lastHtml || block.querySelectorAll('.hnfn-item').length !== count) {
       lastHtml = html;
+      lastCount = count;
+      block['inner' + 'HTML'] = html;
     }
   }
 
@@ -336,12 +355,11 @@
         sp = document.createElement('span');
         sp.className = 'hnfn-count';
         sp.title = 'Notifiche HunterNet';
-        /* va prima dell'<em> del forum: il plugin toglie solo quello preceduto da uno spazio */
-        var em = null, kids = a.children;
-        for (var i = 0; i < kids.length; i++) if (kids[i].tagName === 'EM') { em = kids[i]; break; }
-        a.insertBefore(sp, em);
       }
-      sp['inner' + 'HTML'] = '<em>' + c + '</em>';
+      /* sempre in fondo e senza <em>: il plugin del forum toglie il suo numero
+         con la regex \s<em>(.+)<\/em> e poi ne aggiunge uno nuovo alla fine */
+      if (a.lastChild !== sp) a.appendChild(sp);
+      sp['inner' + 'HTML'] = '<span class="hnfn-hn">HN</span>' + c;
     }
   }
 
@@ -351,7 +369,8 @@
     var a = menuEl();
     if (!a) return;
     new MutationObserver(function () {
-      if (unreadCount() && !a.querySelector('.hnfn-count')) renderCounters();
+      var sp = a.querySelector('.hnfn-count');
+      if (unreadCount() ? (!sp || a.lastChild !== sp) : !!sp) renderCounters();
     }).observe(a, { childList: true });
   }
 
