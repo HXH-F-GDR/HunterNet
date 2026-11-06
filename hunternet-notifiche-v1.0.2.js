@@ -1,4 +1,7 @@
-/* HunterNet - notifiche nel forum (hunternet-notifiche) v1.0.1
+/* HunterNet - notifiche nel forum (hunternet-notifiche) v1.0.2
+   v1.0.2 - Desktop: le righe HunterNet erano nascoste dal CSS di ForumFree
+   (le notifiche partono invisibili e il plugin le mostra una a una); il
+   contatore HN usa lo stesso stile del numero del forum (.menuwrap em).
    v1.0.1 - Il contatore HunterNet sul pulsante Notifiche (desktop) va dopo
    quello del forum e non contiene più un <em>: prima impediva al plugin di
    ForumFree di togliere il proprio numero, che si duplicava. Le righe
@@ -123,7 +126,9 @@
       '#hnfn-block .hnfn-type i{display:flex;align-items:center;justify-content:center;width:100%;height:100%;border-radius:50%;background:var(--uno);color:var(--otto);font-size:12px;line-height:1}' +
       '#hnfn-block .hnfn-acc{opacity:.75;font-size:.9em}' +
       '#hnfn-block .hnfn-end{margin:8px 14px 4px 3px}' +
-      '.hnfn-count{display:inline;margin-left:4px;padding:3px 8px;border-radius:5px;border:2px solid var(--otto);background:var(--uno);color:var(--otto);font:700 13px montserrat,sans-serif}' +
+      '#hnfn-block .hnfn-item{display:block!important}' +
+      /* stesso stile di .menuwrap em della skin */
+      '.menuwrap .hnfn-count{display:inline;margin-left:4px;padding:3px 8px;font-size:13px;font-weight:bold;font-style:normal;color:var(--uno);text-shadow:none;background:var(--sette);border:2px solid var(--uno);border-radius:5px}' +
       '.hnfn-count .hnfn-hn{font-size:9px;margin-right:3px;letter-spacing:.5px;opacity:.85}' +
       '#hnfn-bar{cursor:pointer}';
     var st = document.createElement('style');
